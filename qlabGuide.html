@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QLab 快速落地操作指南</title>
+    
+    <script src="js/tailwindcss.js"></script>
+    <script>
+        // 配置 Tailwind 颜色主题 (匹配 QLab 的暗色风格)
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        qlabDark: '#1e1e1e',
+                        qlabPanel: '#2d2d2d',
+                        qlabGreen: '#10b981', // 类似 Go 按钮的绿色
+                        qlabBlue: '#3b82f6',  // Audio Cue 的蓝色
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 平滑滚动 */
+        html {
+            scroll-behavior: smooth;
+        }
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e1e1e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+        /* 侧边栏激活状态 */
+        .nav-active {
+            color: #10b981;
+            border-left-color: #10b981;
+            background-color: rgba(16, 185, 129, 0.1);
+        }
+        /* 快捷键样式 */
+        kbd {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+    </style>
+</head>
+<body class="bg-qlabDark text-gray-300 font-sans antialiased selection:bg-qlabGreen selection:text-white">
+
+    <!-- 顶部导航 (移动端显示) -->
+    <header class="md:hidden bg-qlabPanel border-b border-gray-700 p-4 sticky top-0 z-50 flex justify-between items-center">
+        <h1 class="text-xl font-bold text-white">QLab 操作指南</h1>
+        <button id="mobile-menu-btn" class="text-gray-300 hover:text-white">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+    </header>
+
+    <div class="flex max-w-7xl mx-auto">
+        <!-- 左侧导航侧边栏 (PC端显示) -->
+        <aside id="sidebar" class="hidden md:block w-64 h-screen sticky top-0 bg-qlabPanel border-r border-gray-700 overflow-y-auto shrink-0 transition-transform duration-300 z-40 fixed md:relative -translate-x-full md:translate-x-0">
+            <div class="p-6">
+                <h1 class="text-2xl font-black text-white tracking-wider flex items-center gap-2">
+                    <span class="w-4 h-4 rounded-full bg-qlabGreen inline-block animate-pulse"></span>
+                    QLab 指南
+                </h1>
+                <p class="text-sm text-gray-400 mt-2">落地操作手册</p>
+            </div>
+            
+            <nav class="mt-4 px-4 pb-20">
+                <p class="px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">目录</p>
+                <a href="#section-basic" class="nav-link block px-4 py-2 mt-1 text-sm text-gray-300 border-l-2 border-transparent hover:text-white hover:bg-gray-800 transition-colors nav-active">1. QLab 操作方式</a>
+                <a href="#section-audio-folder" class="nav-link block px-4 py-2 mt-1 text-sm text-gray-300 border-l-2 border-transparent hover:text-white hover:bg-gray-800 transition-colors">2. 添加仪式音乐文件夹</a>
+                <a href="#section-audio-track" class="nav-link block px-4 py-2 mt-1 text-sm text-gray-300 border-l-2 border-transparent hover:text-white hover:bg-gray-800 transition-colors">3. 各音轨设置</a>
+                <a href="#section-video" class="nav-link block px-4 py-2 mt-1 text-sm text-gray-300 border-l-2 border-transparent hover:text-white hover:bg-gray-800 transition-colors">4. 视频设置</a>
+            </nav>
+        </aside>
+
+        <!-- 移动端侧边栏遮罩 -->
+        <div id="mobile-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"></div>
+
+        <!-- 右侧主要内容区 -->
+        <main class="flex-1 p-6 md:p-12 pb-24 overflow-hidden w-full">
+            
+            <!-- 页面头部 -->
+            <div class="mb-12 border-b border-gray-700 pb-8">
+                <h2 class="text-3xl md:text-5xl font-bold text-white mb-4">QLab 引导说明</h2>
+                <p class="text-lg text-gray-400">日常操作与音视频配置标准流程</p>
+            </div>
+
+            <!-- ===================== 区块 1：基本操作 ===================== -->
+            <section id="section-basic" class="mb-16 scroll-mt-20">
+                <h3 class="text-2xl font-bold text-white mb-6 flex items-center">
+                    <span class="bg-gray-700 text-sm px-2 py-1 rounded mr-3 text-gray-300">01</span>
+                    QLab 操作方式
+                </h3>
+                
+                <div class="mb-6 leading-relaxed text-lg">
+                    所有音频轨道和视频轨道都要在 
+                    <!-- 蓝色光标高亮 -->
+                    <span class="inline-block bg-blue-900/40 text-blue-300 border border-blue-600/50 px-3 py-1 rounded-md font-semibold shadow-sm mx-1">
+                        蓝色光标（即选中状态）
+                    </span> 
+                    下进行操作。
+                </div>
+
+                <div class="bg-qlabPanel p-6 rounded-xl border border-gray-700 shadow-lg">
+                    <h4 class="text-gray-400 font-semibold mb-4 border-b border-gray-600 pb-2">操作方式说明：</h4>
+                    <ul class="space-y-4">
+                        <li class="flex items-center text-gray-200">
+                            <kbd class="bg-gray-700 border border-gray-600 px-3 py-1.5 rounded text-sm text-white mr-4 shadow-sm min-w-[60px] text-center">空格</kbd> 
+                            <span>播放</span>
+                        </li>
+                        <li class="flex items-center text-gray-200">
+                            <kbd class="bg-gray-700 border border-gray-600 px-3 py-1.5 rounded text-sm text-white mr-4 shadow-sm min-w-[60px] text-center">s</kbd> 
+                            <span>清理所有播放轨道</span>
+                        </li>
+                        <li class="flex items-center text-gray-200">
+                            <kbd class="bg-gray-700 border border-gray-600 px-3 py-1.5 rounded text-sm text-white mr-4 shadow-sm min-w-[60px] text-center">p</kbd> 
+                            <span>暂停</span>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- ===================== 区块 2：添加文件夹 ===================== -->
+            <section id="section-audio-folder" class="mb-16 scroll-mt-20">
+                <h3 class="text-2xl font-bold text-white mb-6 flex items-center">
+                    <span class="bg-qlabBlue text-sm px-2 py-1 rounded mr-3 text-white">02</span>
+                    添加仪式音乐文件夹
+                </h3>
+                
+                <p class="mb-6 leading-relaxed text-lg text-gray-300">
+                    拖拽音频文件夹进来，选中文件夹，edit功能区选中：<strong>【Mode】</strong> - <strong>[start first and enter]</strong>。<br>
+                    显示 
+                    <!-- 紫色边框高亮 -->
+                    <span class="inline-block bg-purple-900/40 text-purple-300 border border-purple-500/50 px-3 py-1 rounded-md font-semibold shadow-sm mx-1 mt-2">
+                        紫色边框
+                    </span> 
+                    代表操作成功。
+                </p>
+
+                <!-- 图片区域 -->
+                <div class="my-6 bg-gray-800 p-2 rounded-xl border border-gray-700 shadow-xl">
+                    <img src="images/start.png" 
+                         alt="添加仪式音乐文件夹" 
+                         class="w-full h-auto rounded-lg bg-gray-900"
+                         onerror="this.src='https://via.placeholder.com/1200x600/2d2d2d/808080?text=请将图片放入+images/start.png'">
+                    <p class="text-center text-sm text-gray-500 mt-3 pb-1">图例：images/start.png</p>
+                </div>
+            </section>
+
+            <!-- ===================== 区块 3：各音轨设置 ===================== -->
+            <section id="section-audio-track" class="mb-16 scroll-mt-20">
+                <h3 class="text-2xl font-bold text-white mb-6 flex items-center">
+                    <span class="bg-qlabBlue text-sm px-2 py-1 rounded mr-3 text-white">03</span>
+                    各音轨设置
+                </h3>
+                
+                <div class="space-y-8 text-gray-300 text-lg">
+                    <!-- 步骤 1 -->
+                    <div>
+                        <h4 class="text-white font-bold mb-2 flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-gray-700 text-sm flex items-center justify-center">1</span> 
+                            必要操作：
+                        </h4>
+                        <p class="ml-8">全部选中所有音轨后，edit功能区打开 <strong>【Triggers】</strong> - 右侧勾选 <strong>【Fade and stop】</strong></p>
+                    </div>
+
+                    <!-- 步骤 2 -->
+                    <div>
+                        <h4 class="text-white font-bold mb-3 flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-gray-700 text-sm flex items-center justify-center">2</span> 
+                            音轨播放和时间轴设置：
+                        </h4>
+                        <p class="ml-8 mb-3">选中对应音轨，edit功能区打开：</p>
+                        <div class="ml-8 bg-qlabPanel p-5 rounded-lg border border-gray-700 shadow-md">
+                            <ul class="space-y-3">
+                                <li class="flex items-start">
+                                    <span class="text-qlabBlue mr-2 font-bold">»</span> 
+                                    <span><strong>【Time&loop】</strong> - <strong>【Start time】</strong>：设置开始播放时间</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-qlabBlue mr-2 font-bold">»</span> 
+                                    <span><strong>【Play】</strong>：播放次数</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-qlabBlue mr-2 font-bold">»</span> 
+                                    <span><strong>【infinite loop】</strong>：开始循环播放</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <p class="ml-8 mt-4 text-gray-400">
+                            <strong class="text-gray-300">右侧波形时间轴：</strong>点击后出现黄色线条，可设置播放头，即定位播放
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 图片区域 -->
+                <div class="my-8 bg-gray-800 p-2 rounded-xl border border-gray-700 shadow-xl">
+                    <img src="images/audio.png" 
+                         alt="各音轨设置" 
+                         class="w-full h-auto rounded-lg bg-gray-900"
+                         onerror="this.src='https://via.placeholder.com/1200x600/2d2d2d/808080?text=请将图片放入+images/audio.png'">
+                    <p class="text-center text-sm text-gray-500 mt-3 pb-1">图例：images/audio.png</p>
+                </div>
+            </section>
+
+            <!-- ===================== 区块 4：视频设置 ===================== -->
+            <section id="section-video" class="mb-16 scroll-mt-20">
+                <h3 class="text-2xl font-bold text-white mb-6 flex items-center">
+                    <span class="bg-purple-600 text-sm px-2 py-1 rounded mr-3 text-white">04</span>
+                    视频设置
+                </h3>
+                
+                <ol class="space-y-5 text-gray-300 text-lg ml-2 border-l-2 border-gray-700 pl-6">
+                    <li class="relative">
+                        <span class="absolute -left-[35px] top-1 w-4 h-4 rounded-full bg-gray-600 border-4 border-qlabDark"></span>
+                        导入视频文件后，选中视频，快捷键：<kbd class="bg-gray-700 border border-gray-600 px-2 py-1 rounded text-sm text-white mx-1 shadow">cmd + ,</kbd> 打开设置面板。
+                    </li>
+                    <li class="relative">
+                        <span class="absolute -left-[35px] top-1 w-4 h-4 rounded-full bg-gray-600 border-4 border-qlabDark"></span>
+                        选中 <strong>【Video】</strong> - <strong>vidde Outputs</strong> 视频输出选中副屏 <strong>【对应副屏名称】</strong> 
+                        <span class="text-gray-500 text-base block mt-1">（图例所示为GobiggerR，Retina 是苹果显示器）</span> 
+                        - 点击 <strong>【Done】</strong> 保存设置。
+                    </li>
+                    <li class="relative">
+                        <span class="absolute -left-[35px] top-1 w-4 h-4 rounded-full bg-gray-600 border-4 border-qlabDark"></span>
+                        婚纱照需要设置循环播放，循环播放和音频设置方式相同。生活视频/快剪不需要设置。
+                    </li>
+                    <li class="relative">
+                        <span class="absolute -left-[35px] top-1 w-4 h-4 rounded-full bg-gray-600 border-4 border-qlabDark"></span>
+                        播放模式下，点击 <kbd class="bg-gray-700 border border-gray-600 px-2 py-1 rounded text-sm text-white mx-1 shadow">esc</kbd> 退出播放。
+                    </li>
+                </ol>
+
+                <!-- 图片区域 -->
+                <div class="my-8 bg-gray-800 p-2 rounded-xl border border-gray-700 shadow-xl">
+                    <img src="images/video.png" 
+                         alt="视频设置" 
+                         class="w-full h-auto rounded-lg bg-gray-900"
+                         onerror="this.src='https://via.placeholder.com/1200x600/2d2d2d/808080?text=请将图片放入+images/vedio.png'">
+                    <p class="text-center text-sm text-gray-500 mt-3 pb-1">图例：images/vedio.png</p>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- 交互脚本 (处理移动端菜单和滚动高亮) -->
+    <script>
+        // 移动端菜单切换
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('mobile-overlay');
+
+        function toggleMenu() {
+            sidebar.classList.toggle('-translate-x-full');
+            sidebar.classList.toggle('fixed');
+            overlay.classList.toggle('hidden');
+        }
+
+        menuBtn.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+
+        // 点击导航链接后在移动端自动收起菜单
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                if(window.innerWidth < 768) {
+                    toggleMenu();
+                }
+            });
+        });
+
+        // 滚动监听，自动高亮左侧导航
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= (sectionTop - 100)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('nav-active', 'text-white');
+                link.classList.add('text-gray-300');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('nav-active', 'text-white');
+                    link.classList.remove('text-gray-300');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
